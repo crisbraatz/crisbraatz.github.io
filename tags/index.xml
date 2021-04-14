@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Cristopher&#39;s dev blog</title>
+    <link>https://crisbraatz.github.io/tags/</link>
+    <description>Recent content in Tags on Cristopher&#39;s dev blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Wed, 14 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CSharp</title>
+      <link>https://crisbraatz.github.io/tags/csharp/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://crisbraatz.github.io/tags/csharp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DotNet</title>
+      <link>https://crisbraatz.github.io/tags/dotnet/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://crisbraatz.github.io/tags/dotnet/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Object-oriented programming</title>
+      <link>https://crisbraatz.github.io/tags/object-oriented-programming/</link>
+      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://crisbraatz.github.io/tags/object-oriented-programming/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

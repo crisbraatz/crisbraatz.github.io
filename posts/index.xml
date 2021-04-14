@@ -1,0 +1,365 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on Cristopher&#39;s dev blog</title>
+        <link>https://crisbraatz.github.io/posts/</link>
+        <description>Recent content in Posts on Cristopher&#39;s dev blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+        <lastBuildDate>Wed, 14 Apr 2021 00:00:00 +0000</lastBuildDate>
+        <atom:link href="https://crisbraatz.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>The Enigma Machine - Part I - The Algorithm</title>
+            <link>https://crisbraatz.github.io/posts/the-enigma-machine-part-i-the-algorithm/</link>
+            <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
+            
+            <guid>https://crisbraatz.github.io/posts/the-enigma-machine-part-i-the-algorithm/</guid>
+            <description>The motivation When I was in college, I attended a course of crypthography which whom our professor challenged us to code the enigma machine algorithm in Java. I was still figuring out the object-oriented programming back then, so the code was not pretty at all, but hey, it worked anyway.
+As the years went by and I kept developing my programming skills, I always had the desire to redo the algorithm with the best practices I have learned and in my favorite programming language: C#.</description>
+            <content type="html"><![CDATA[<h2 id="the-motivation">The motivation</h2>
+<p>When I was in college, I attended a course of crypthography which whom our professor challenged us to code the enigma machine algorithm in Java. I was still figuring out the object-oriented programming back then, so the code was not pretty at all, but hey, it worked anyway.</p>
+<p>As the years went by and I kept developing my programming skills, I always had the desire to redo the algorithm with the best practices I have learned and in my favorite programming language: C#. On top of that, as 2020 went by, Adobe Flash Player, thankfully, went too&hellip; but it putted one of the best online enigma machine simulator to rest.</p>
+<p>Despite still having a few online simulators, none of them pleased me like that one, which had an unique feature of all I crossed paths with: the ability to undo the typing! All that said, it was a perfect opportunity to release one, but in my own way.</p>
+<p>You can check the result <a href="https://crisbraatz.github.io/EnigmaSimulatorBlazor/">here</a>. To walkthrought it, I splitted this project into a two part series:</p>
+<ul>
+<li>This post which details the algorithm itself</li>
+<li>And one on how I published it as a static website on GitHub Pages (upcoming)</li>
+</ul>
+<h2 id="a-brief-introduction-on-the-enigma-machine">A brief introduction on the Enigma Machine</h2>
+<h3 id="what-it-is">What it is?</h3>
+<p>Per <a href="https://en.wikipedia.org/wiki/Enigma_machine">Wikipedia</a>:</p>
+<blockquote>
+<p>&ldquo;It is a cipher device developed and used in the early to mid 20th century to protect commercial, diplomatic, and military communication.&rdquo;</p>
+</blockquote>
+<p>I will not get into the history of it, the above link will provide you a much more detailed info. But it is worth mentioning that althought a deep reading on the specs considering the era it was released will blow your mind, from the history point of view, keep in mind that it was because of a few brilliant mathematicians and cryptanalysts from many countries whom cracked the device that the World War II was substantially shortened for good.</p>
+<h3 id="how-it-works">How it works?</h3>
+<p>Abstracting the physical device and its components, let&rsquo;s break it down step by step the encryption of the <code>C</code> letter:</p>
+<blockquote>
+<p>First, the <code>C</code> letter is putted into the plugboard which converts it to a mapped letter. This mapping can be default or custom like this example:</p>
+<ul>
+<li>Every <code>C</code> becomes <code>C</code> (going and returning)</li>
+<li>Every <code>C</code> becomes <code>R</code> (going) and every <code>R</code> becomes <code>C</code> (returning)</li>
+</ul>
+<p>This is also the last step, but we will get to it later. Here it is as a flow chart:</p>
+</blockquote>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-1.png" alt="Image"></p>
+<blockquote>
+<p>Second, for every typed letter, the device spins all its rotors before converting it based on some rules:</p>
+<ol>
+<li>The third rotor always is spinned</li>
+<li>When the third rotor steps from a specific letter to another, the second rotor is spinned</li>
+<li>When the second rotor steps from a specific letter to another, the first rotor is spinned</li>
+</ol>
+<p>There are 8 different rotors, you can check them <a href="https://en.wikipedia.org/wiki/Enigma_rotor_details">here</a>. This project uses the I, II and III rotors and here are their specs:</p>
+<table>
+<thead>
+<tr>
+<th>Rotor</th>
+<th>Spin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I</td>
+<td>From Q to R</td>
+</tr>
+<tr>
+<td>II</td>
+<td>From E to F</td>
+</tr>
+<tr>
+<td>III</td>
+<td>From V to W</td>
+</tr>
+</tbody>
+</table>
+<p>The flow chart is represented by the next two images:</p>
+</blockquote>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-2.png" alt="Image"></p>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-3.png" alt="Image"></p>
+<blockquote>
+<p>Third, the converted letter from the plugboard is used to get its index on the spinned alphabet. The letter on the third rotor map that has this same index is used to get its index on the not spinned alphabet. The letter on the spinned alphabet that has this same index is the new output.</p>
+<p>In the link shown in the previous step you can check all the rotors mapping as well, but here are the chosen ones:</p>
+<table>
+<thead>
+<tr>
+<th>Rotor</th>
+<th>Mapping</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I</td>
+<td>EKMFLGDQVZNTOWYHXUSPAIBRCJ</td>
+</tr>
+<tr>
+<td>II</td>
+<td>AJDKSIRUXBLHWTMCQGZNPYFVOE</td>
+</tr>
+<tr>
+<td>III</td>
+<td>BDFHJLCPRTXVZNYEIWGAKMUSQO</td>
+</tr>
+</tbody>
+</table>
+<p>This step repeats itself from the other rotors. The next three images show it:</p>
+</blockquote>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-4.png" alt="Image"></p>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-5.png" alt="Image"></p>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-6.png" alt="Image"></p>
+<blockquote>
+<p>Fourth, the last converted letter from the rotors is putted into the reflector. It consists of a single alphabet splitted into two equal size sets and here it is the used UKW-B model specs:</p>
+<table>
+<thead>
+<tr>
+<th>Mapping</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YRUHQSLPXNOZW</td>
+</tr>
+<tr>
+<td>ABCDEFGIJKMTV</td>
+</tr>
+</tbody>
+</table>
+<p>This step has no direction. Basically, the mapping that has the current letter is used to map to the other. Since the letter is <code>Z</code>:</p>
+</blockquote>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-7.png" alt="Image"></p>
+<blockquote>
+<p>Fifth, it runs all the rotors again, but in the other direction. Also, here the converted letter from the reflector is used to get its index on the spinned alphabet. The letter on the not spinned alphabet that has this same index is used to get its index on the first rotor map. The letter on the spinned alphabet that has this same index is the new output.</p>
+<p>This step repeats itself from the other rotors as well. The next three images show it:</p>
+</blockquote>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-8.png" alt="Image"></p>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-9.png" alt="Image"></p>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-10.png" alt="Image"></p>
+<blockquote>
+<p>Last, the last converted letter from the rotors is putted back into the plugboard, but in the other direction as well:</p>
+</blockquote>
+<p><img src="/posts/the-enigma-machine-part-i-the-algorithm/img/post-11.png" alt="Image"></p>
+<h2 id="code-time">Code time</h2>
+<p>Starting by the <code>Plugboard</code> class which is used in the first and last steps. It has two private string properties: <code>MapA</code> which is static because it is a default alphabet and <code>MapB</code> which is up to the user to set it through an overloaded constructor. There is also a public method <code>Convert</code> that given two parameters: a letter and a boolean for direction, returns a new letter:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Plugboard</span>
+{
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">string</span> MapA =&gt; <span style="color:#e6db74">&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#34;</span>;
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">string</span> MapB { <span style="color:#66d9ef">get</span>; }
+
+    <span style="color:#66d9ef">public</span> Plugboard(<span style="color:#66d9ef">string</span> mapB)
+    {
+        MapB = mapB;
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">char</span> Convert(<span style="color:#66d9ef">char</span> <span style="color:#66d9ef">value</span>, <span style="color:#66d9ef">bool</span> isGoing) =&gt; isGoing
+        ? MapB[MapA.IndexOf(<span style="color:#66d9ef">value</span>)]
+        : MapA[MapB.IndexOf(<span style="color:#66d9ef">value</span>)];
+}
+</code></pre></div><p>All rotors have the same behavior and use three alphabets: one default, another one also default but spinned and last but not least, its own customized. The first two can be reused for any rotor given some parameters. The static <code>Alphabet</code> class has only one private static readonly property named <code>Maps</code> which consists of a dictionary where its keys are the current spin and its values are the spinned alphabet. To use it in the rotors, it has two public static methods:</p>
+<ul>
+<li><code>GetCharBy</code> that has two parameters: <code>key</code> which if not inputed uses a default zero value and it is responsible from getting the correct alphabet of the dictionary, and <code>index</code> that is responsible from getting the letter of the retrieved alphabet based on its index</li>
+<li><code>GetIndexBy</code> that has two parameters: <code>key</code> which has the same behavior as the same parameter in the previous method, and <code>value</code> that is responsible from getting the index of the retrieved alphabet based on its letter</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Alphabet</span>
+{
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">readonly</span> IDictionary&lt;<span style="color:#66d9ef">int</span>, <span style="color:#66d9ef">string</span>&gt; Maps = <span style="color:#66d9ef">new</span> Dictionary&lt;<span style="color:#66d9ef">int</span>, <span style="color:#66d9ef">string</span>&gt;
+    {
+        {<span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#34;</span>},
+        {<span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;ZABCDEFGHIJKLMNOPQRSTUVWXY&#34;</span>},
+        {<span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#34;YZABCDEFGHIJKLMNOPQRSTUVWX&#34;</span>},
+        {<span style="color:#ae81ff">3</span>, <span style="color:#e6db74">&#34;XYZABCDEFGHIJKLMNOPQRSTUVW&#34;</span>},
+        {<span style="color:#ae81ff">4</span>, <span style="color:#e6db74">&#34;WXYZABCDEFGHIJKLMNOPQRSTUV&#34;</span>},
+        {<span style="color:#ae81ff">5</span>, <span style="color:#e6db74">&#34;VWXYZABCDEFGHIJKLMNOPQRSTU&#34;</span>},
+        {<span style="color:#ae81ff">6</span>, <span style="color:#e6db74">&#34;UVWXYZABCDEFGHIJKLMNOPQRST&#34;</span>},
+        {<span style="color:#ae81ff">7</span>, <span style="color:#e6db74">&#34;TUVWXYZABCDEFGHIJKLMNOPQRS&#34;</span>},
+        {<span style="color:#ae81ff">8</span>, <span style="color:#e6db74">&#34;STUVWXYZABCDEFGHIJKLMNOPQR&#34;</span>},
+        {<span style="color:#ae81ff">9</span>, <span style="color:#e6db74">&#34;RSTUVWXYZABCDEFGHIJKLMNOPQ&#34;</span>},
+        {<span style="color:#ae81ff">10</span>, <span style="color:#e6db74">&#34;QRSTUVWXYZABCDEFGHIJKLMNOP&#34;</span>},
+        {<span style="color:#ae81ff">11</span>, <span style="color:#e6db74">&#34;PQRSTUVWXYZABCDEFGHIJKLMNO&#34;</span>},
+        {<span style="color:#ae81ff">12</span>, <span style="color:#e6db74">&#34;OPQRSTUVWXYZABCDEFGHIJKLMN&#34;</span>},
+        {<span style="color:#ae81ff">13</span>, <span style="color:#e6db74">&#34;NOPQRSTUVWXYZABCDEFGHIJKLM&#34;</span>},
+        {<span style="color:#ae81ff">14</span>, <span style="color:#e6db74">&#34;MNOPQRSTUVWXYZABCDEFGHIJKL&#34;</span>},
+        {<span style="color:#ae81ff">15</span>, <span style="color:#e6db74">&#34;LMNOPQRSTUVWXYZABCDEFGHIJK&#34;</span>},
+        {<span style="color:#ae81ff">16</span>, <span style="color:#e6db74">&#34;KLMNOPQRSTUVWXYZABCDEFGHIJ&#34;</span>},
+        {<span style="color:#ae81ff">17</span>, <span style="color:#e6db74">&#34;JKLMNOPQRSTUVWXYZABCDEFGHI&#34;</span>},
+        {<span style="color:#ae81ff">18</span>, <span style="color:#e6db74">&#34;IJKLMNOPQRSTUVWXYZABCDEFGH&#34;</span>},
+        {<span style="color:#ae81ff">19</span>, <span style="color:#e6db74">&#34;HIJKLMNOPQRSTUVWXYZABCDEFG&#34;</span>},
+        {<span style="color:#ae81ff">20</span>, <span style="color:#e6db74">&#34;GHIJKLMNOPQRSTUVWXYZABCDEF&#34;</span>},
+        {<span style="color:#ae81ff">21</span>, <span style="color:#e6db74">&#34;FGHIJKLMNOPQRSTUVWXYZABCDE&#34;</span>},
+        {<span style="color:#ae81ff">22</span>, <span style="color:#e6db74">&#34;EFGHIJKLMNOPQRSTUVWXYZABCD&#34;</span>},
+        {<span style="color:#ae81ff">23</span>, <span style="color:#e6db74">&#34;DEFGHIJKLMNOPQRSTUVWXYZABC&#34;</span>},
+        {<span style="color:#ae81ff">24</span>, <span style="color:#e6db74">&#34;CDEFGHIJKLMNOPQRSTUVWXYZAB&#34;</span>},
+        {<span style="color:#ae81ff">25</span>, <span style="color:#e6db74">&#34;BCDEFGHIJKLMNOPQRSTUVWXYZA&#34;</span>}
+    };
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">char</span> GetCharBy(<span style="color:#66d9ef">int</span> index, <span style="color:#66d9ef">int</span> key = <span style="color:#ae81ff">0</span>) =&gt; Maps[key][index];
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> GetIndexBy(<span style="color:#66d9ef">char</span> <span style="color:#66d9ef">value</span>, <span style="color:#66d9ef">int</span> key = <span style="color:#ae81ff">0</span>) =&gt; Maps[key].IndexOf(<span style="color:#66d9ef">value</span>);
+}
+</code></pre></div><p>Continuing on the &ldquo;all the rotors have the same behavior&rdquo; logic, the abstract <code>Rotor</code> class implements all the common behaviors while delegating to the concrete classes to implement all the specific behaviors. Basically, it is up to them to implement the abstract properties <code>RotorMap</code> and <code>SpinNextRotorCharForward</code> while the rest of the properties and methods are implemented here.</p>
+<p>It has the properties:</p>
+<ul>
+<li><code>CurrentChar</code>, which only its rotor can set it, but other classes can use it</li>
+<li><code>RotorMap</code>, which is set and used only by the concrete rotor classes</li>
+<li><code>SpinNextRotorCharForward</code>, which is set by the concrete rotor classes and used by other classes</li>
+<li><code>SpinNextRotorCharBackward</code>, which is the <code>SpinNextRotorCharForward</code> minus one casted to char for undo purposes</li>
+</ul>
+<p>The <code>CurrentChar</code> property is up to the user to set it through an overloaded constructor.</p>
+<p>There are also three public methods:</p>
+<ul>
+<li><code>Convert</code>, which given a letter and a boolean for direction, returns a new letter</li>
+<li><code>SpinForward</code>, which increments <code>CurrentChar</code> by one</li>
+<li><code>SpinBackward</code>, which decrements <code>CurrentChar</code> by one</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Rotor</span>
+{
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">char</span> CurrentChar { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">set</span>; }
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">string</span> RotorMap { <span style="color:#66d9ef">get</span>; }
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">char</span> SpinNextRotorCharForward { <span style="color:#66d9ef">get</span>; }
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">char</span> SpinNextRotorCharBackward =&gt; (<span style="color:#66d9ef">char</span>) (SpinNextRotorCharForward - <span style="color:#ae81ff">1</span>);
+
+    <span style="color:#66d9ef">protected</span> Rotor(<span style="color:#66d9ef">char</span> startingChar)
+    {
+        CurrentChar = startingChar;
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">char</span> Convert(<span style="color:#66d9ef">char</span> <span style="color:#66d9ef">value</span>, <span style="color:#66d9ef">bool</span> isGoing)
+    {
+        <span style="color:#66d9ef">int</span> index;
+        <span style="color:#66d9ef">char</span> result;
+
+        <span style="color:#66d9ef">if</span> (isGoing)
+        {
+            index = Alphabet.GetIndexBy(<span style="color:#66d9ef">value</span>, CurrentChar - <span style="color:#ae81ff">65</span>);
+            result = RotorMap[index];
+            index = Alphabet.GetIndexBy(result);
+            result = Alphabet.GetCharBy(index, CurrentChar - <span style="color:#ae81ff">65</span>);
+        }
+        <span style="color:#66d9ef">else</span>
+        {
+            index = Alphabet.GetIndexBy(<span style="color:#66d9ef">value</span>, CurrentChar - <span style="color:#ae81ff">65</span>);
+            result = Alphabet.GetCharBy(index);
+            index = RotorMap.IndexOf(result);
+            result = Alphabet.GetCharBy(index, CurrentChar - <span style="color:#ae81ff">65</span>);
+        }
+
+        <span style="color:#66d9ef">return</span> result;
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> SpinForward() =&gt; CurrentChar = (<span style="color:#66d9ef">char</span>) (CurrentChar + <span style="color:#ae81ff">1</span> &gt; <span style="color:#ae81ff">90</span> ? <span style="color:#ae81ff">65</span> : CurrentChar + <span style="color:#ae81ff">1</span>);
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> SpinBackward() =&gt; CurrentChar = (<span style="color:#66d9ef">char</span>) (CurrentChar - <span style="color:#ae81ff">1</span> &lt; <span style="color:#ae81ff">65</span> ? <span style="color:#ae81ff">90</span> : CurrentChar - <span style="color:#ae81ff">1</span>);
+}
+</code></pre></div><p>Now, the sealed concrete <code>Rotor</code> classes which whom just extends the abstract version and implement the required properties and methods:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RotorOne</span> : Rotor
+{
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">string</span> RotorMap =&gt; <span style="color:#e6db74">&#34;EKMFLGDQVZNTOWYHXUSPAIBRCJ&#34;</span>;
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">char</span> SpinNextRotorCharForward =&gt; <span style="color:#e6db74">&#39;R&#39;</span>;
+
+    <span style="color:#66d9ef">public</span> RotorOne(<span style="color:#66d9ef">char</span> startingChar) : <span style="color:#66d9ef">base</span>(startingChar)
+    {
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RotorTwo</span> : Rotor
+{
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">string</span> RotorMap =&gt; <span style="color:#e6db74">&#34;AJDKSIRUXBLHWTMCQGZNPYFVOE&#34;</span>;
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">char</span> SpinNextRotorCharForward =&gt; <span style="color:#e6db74">&#39;F&#39;</span>;
+
+    <span style="color:#66d9ef">public</span> RotorTwo(<span style="color:#66d9ef">char</span> startingChar) : <span style="color:#66d9ef">base</span>(startingChar)
+    {
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RotorThree</span> : Rotor
+{
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">string</span> RotorMap =&gt; <span style="color:#e6db74">&#34;BDFHJLCPRTXVZNYEIWGAKMUSQO&#34;</span>;
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">char</span> SpinNextRotorCharForward =&gt; <span style="color:#e6db74">&#39;W&#39;</span>;
+
+    <span style="color:#66d9ef">public</span> RotorThree(<span style="color:#66d9ef">char</span> startingChar) : <span style="color:#66d9ef">base</span>(startingChar)
+    {
+    }
+}
+</code></pre></div><p>Next, the static <code>Reflector</code> class which has two private static string properties: <code>MapA</code> and <code>MapB</code>. There is also a public static method <code>Convert</code> that given a letter returns a new letter:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Reflector</span>
+{
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">string</span> MapA =&gt; <span style="color:#e6db74">&#34;YRUHQSLPXNOZW&#34;</span>;
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">string</span> MapB =&gt; <span style="color:#e6db74">&#34;ABCDEFGIJKMTV&#34;</span>;
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">char</span> Convert(<span style="color:#66d9ef">char</span> <span style="color:#66d9ef">value</span>) =&gt; MapA.Contains(<span style="color:#66d9ef">value</span>)
+        ? MapB[MapA.IndexOf(<span style="color:#66d9ef">value</span>)]
+        : MapA[MapB.IndexOf(<span style="color:#66d9ef">value</span>)];
+}
+</code></pre></div><p>To cap it off, the engine of the machine: the <code>Enigma</code> class. It has the <code>Plugboard</code>, three &ldquo;to be determined&rdquo; <code>Rotor</code>, the <code>EncryptedMessage</code> and the <code>OriginalMessage</code> properties. There are also three methods:</p>
+<ul>
+<li><code>Encrypt</code>, which given a letter, runs the algorithm and append its converted letter to the <code>EncryptedMessage</code> and the original to the <code>OriginalMessage</code> properties</li>
+<li><code>Undo</code>, which is responsible for undoing the last <code>Encrypt</code> run</li>
+<li><code>Spin</code>, which is responsible for spinning, when needed, the rotors before the <code>Encrypt</code> method calls any <code>Convert</code> method</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Enigma</span>
+{
+    <span style="color:#66d9ef">public</span> Plugboard Plugboard { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+    <span style="color:#66d9ef">public</span> Rotor FirstRotor { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+    <span style="color:#66d9ef">public</span> Rotor SecondRotor { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+    <span style="color:#66d9ef">public</span> Rotor ThirdRotor { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> EncryptedMessage { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> OriginalMessage { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Encrypt(<span style="color:#66d9ef">char</span> character)
+    {
+        OriginalMessage += character;
+
+        <span style="color:#66d9ef">var</span> currentChar = Plugboard.Convert(character, <span style="color:#66d9ef">true</span>);
+
+        Spin();
+
+        currentChar = ThirdRotor.Convert(currentChar, <span style="color:#66d9ef">true</span>);
+        currentChar = SecondRotor.Convert(currentChar, <span style="color:#66d9ef">true</span>);
+        currentChar = FirstRotor.Convert(currentChar, <span style="color:#66d9ef">true</span>);
+
+        currentChar = Reflector.Convert(currentChar);
+
+        currentChar = FirstRotor.Convert(currentChar, <span style="color:#66d9ef">false</span>);
+        currentChar = SecondRotor.Convert(currentChar, <span style="color:#66d9ef">false</span>);
+        currentChar = ThirdRotor.Convert(currentChar, <span style="color:#66d9ef">false</span>);
+
+        currentChar = Plugboard.Convert(currentChar, <span style="color:#66d9ef">false</span>);
+
+        EncryptedMessage += currentChar;
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Undo()
+    {
+        <span style="color:#66d9ef">if</span> (OriginalMessage.Length &lt;= <span style="color:#ae81ff">0</span>)
+            <span style="color:#66d9ef">return</span>;
+
+        EncryptedMessage = EncryptedMessage[..^<span style="color:#ae81ff">1</span>];
+        OriginalMessage = OriginalMessage[..^<span style="color:#ae81ff">1</span>];
+
+        ThirdRotor.SpinBackward();
+
+        <span style="color:#66d9ef">if</span> (ThirdRotor.CurrentChar == ThirdRotor.SpinNextRotorCharBackward)
+            SecondRotor.SpinBackward();
+
+        <span style="color:#66d9ef">if</span> (SecondRotor.CurrentChar == SecondRotor.SpinNextRotorCharBackward)
+            FirstRotor.SpinBackward();
+    }
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> Spin()
+    {
+        ThirdRotor.SpinForward();
+
+        <span style="color:#66d9ef">if</span> (ThirdRotor.CurrentChar == ThirdRotor.SpinNextRotorCharForward)
+            SecondRotor.SpinForward();
+
+        <span style="color:#66d9ef">if</span> (SecondRotor.CurrentChar == SecondRotor.SpinNextRotorCharForward)
+            FirstRotor.SpinForward();
+    }
+}
+</code></pre></div><h2 id="improvements">Improvements?</h2>
+<p>The structure of the project allows it to include different rotors combinations since it uses abstraction.</p>
+<p><em><strong>P.S. if you think there are other upgrades, enhancements or tweaks that can be done, feel free to fork the <a href="https://github.com/crisbraatz/EnigmaSimulatorBlazor">repository</a>, but keep in mind that the specs used here belongs to the M3 version of the Enigma Machine!</strong></em></p>
+<p>Thanks for reading it!</p>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>
