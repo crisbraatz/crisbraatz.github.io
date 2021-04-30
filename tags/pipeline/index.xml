@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>CSharp on Cristopher&#39;s dev blog</title>
-    <link>https://crisbraatz.github.io/tags/csharp/</link>
-    <description>Recent content in CSharp on Cristopher&#39;s dev blog</description>
+    <title>Pipeline on Cristopher&#39;s dev blog</title>
+    <link>https://crisbraatz.github.io/tags/pipeline/</link>
+    <description>Recent content in Pipeline on Cristopher&#39;s dev blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 30 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/tags/csharp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 30 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/tags/pipeline/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>The Enigma Machine - Part II - Publishing</title>
       <link>https://crisbraatz.github.io/posts/the-enigma-machine-part-ii-publishing/</link>
@@ -17,16 +17,6 @@
       <description>Refreshing the memory In the previous post I focused on the algorithm, but my main goal described in the third paragraph was to release the project as an online simulator! In order to achieve that, I had decided to built it with the fresh Blazor framework, which per Microsoft:
  &amp;ldquo;&amp;hellip; lets you build interactive web UIs using C# instead of JavaScript.&amp;rdquo;
  I will not dive into the Blazor framework itself since my focus in this post is on how to publish this type of project as a static website on Github Pages.</description>
-    </item>
-    
-    <item>
-      <title>The Enigma Machine - Part I - The Algorithm</title>
-      <link>https://crisbraatz.github.io/posts/the-enigma-machine-part-i-the-algorithm/</link>
-      <pubDate>Wed, 14 Apr 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://crisbraatz.github.io/posts/the-enigma-machine-part-i-the-algorithm/</guid>
-      <description>The motivation When I was in college, I attended a course of crypthography which whom our professor challenged us to code the enigma machine algorithm in Java. I was still figuring out the object-oriented programming back then, so the code was not pretty at all, but hey, it worked anyway.
-As the years went by and I kept developing my programming skills, I always had the desire to redo the algorithm with the best practices I have learned and in my favorite programming language: C#.</description>
     </item>
     
   </channel>
