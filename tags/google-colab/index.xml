@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Google Colab on Cristopher&#39;s dev blog</title>
+    <link>https://crisbraatz.github.io/tags/google-colab/</link>
+    <description>Recent content in Google Colab on Cristopher&#39;s dev blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Thu, 20 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/tags/google-colab/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2021 NBA MVP Award Share - Part I - Scrap</title>
+      <link>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-i-scrap/</link>
+      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-i-scrap/</guid>
+      <description>The idea I had a Data Science professor that once quote:
+ It is harder to mine the data then analyze it.
+ That quote stuck in my head and it led to this post that will show you the challenges while mining data!
+Since I am a huge NBA fan and there are tons of stats of its players, I had decided to built two datasets that enable us to predict the 2021 NBA MVP award share (upcoming), which it is the highest individual accolade for a basketball player in a season.</description>
+    </item>
+    
+  </channel>
+</rss>
