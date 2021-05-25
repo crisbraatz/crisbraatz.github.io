@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Python on Cristopher&#39;s dev blog</title>
-    <link>https://crisbraatz.github.io/tags/python/</link>
-    <description>Recent content in Python on Cristopher&#39;s dev blog</description>
+    <title>Logistic Regression on Cristopher&#39;s dev blog</title>
+    <link>https://crisbraatz.github.io/tags/logistic-regression/</link>
+    <description>Recent content in Logistic Regression on Cristopher&#39;s dev blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 25 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 25 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/tags/logistic-regression/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>2021 NBA MVP Award Share - Part II - Machine Learning</title>
       <link>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-ii-machine-learning/</link>
@@ -18,18 +18,6 @@
 Requirements We will use:
  A Google Colab account  But, if you prefer to do it locally, you will need:
  Python Matplotlib NumPy Pandas Scikit-learn Seaborn An IDE of your preference (I highly recommend Jupyter)  Let&amp;rsquo;s get to work Basic setup First, create a code cell including all the libraries that are going to be used:</description>
-    </item>
-    
-    <item>
-      <title>2021 NBA MVP Award Share - Part I - Scrap</title>
-      <link>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-i-scrap/</link>
-      <pubDate>Thu, 20 May 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-i-scrap/</guid>
-      <description>The idea I had a Data Science professor that once quote:
- It is harder to mine the data then analyze it.
- That quote stuck in my head and it led to this post that will show you the challenges while mining data!
-Since I am a huge NBA fan and there are tons of stats of its players, I had decided to built two datasets that enable us to predict the 2021 NBA MVP award share (upcoming), which it is the highest individual accolade for a basketball player in a season.</description>
     </item>
     
   </channel>

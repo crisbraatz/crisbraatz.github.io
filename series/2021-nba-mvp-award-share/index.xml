@@ -7,7 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Thu, 20 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/series/2021-nba-mvp-award-share/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 25 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://crisbraatz.github.io/series/2021-nba-mvp-award-share/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2021 NBA MVP Award Share - Part II - Machine Learning</title>
+      <link>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-ii-machine-learning/</link>
+      <pubDate>Tue, 25 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-ii-machine-learning/</guid>
+      <description>Refreshing the memory In the previous post, I built two datasets, one for training and another one for production. Without further ado, let&amp;rsquo;s predict the 2021 NBA MVP award share.
+Requirements We will use:
+ A Google Colab account  But, if you prefer to do it locally, you will need:
+ Python Matplotlib NumPy Pandas Scikit-learn Seaborn An IDE of your preference (I highly recommend Jupyter)  Let&amp;rsquo;s get to work Basic setup First, create a code cell including all the libraries that are going to be used:</description>
+    </item>
+    
     <item>
       <title>2021 NBA MVP Award Share - Part I - Scrap</title>
       <link>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-i-scrap/</link>

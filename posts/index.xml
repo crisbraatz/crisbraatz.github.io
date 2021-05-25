@@ -6,8 +6,443 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-        <lastBuildDate>Thu, 20 May 2021 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Tue, 25 May 2021 00:00:00 +0000</lastBuildDate>
         <atom:link href="https://crisbraatz.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>2021 NBA MVP Award Share - Part II - Machine Learning</title>
+            <link>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-ii-machine-learning/</link>
+            <pubDate>Tue, 25 May 2021 00:00:00 +0000</pubDate>
+            
+            <guid>https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-ii-machine-learning/</guid>
+            <description>Refreshing the memory In the previous post, I built two datasets, one for training and another one for production. Without further ado, let&amp;rsquo;s predict the 2021 NBA MVP award share.
+Requirements We will use:
+ A Google Colab account  But, if you prefer to do it locally, you will need:
+ Python Matplotlib NumPy Pandas Scikit-learn Seaborn An IDE of your preference (I highly recommend Jupyter)  Let&amp;rsquo;s get to work Basic setup First, create a code cell including all the libraries that are going to be used:</description>
+            <content type="html"><![CDATA[<h2 id="refreshing-the-memory">Refreshing the memory</h2>
+<p>In the previous <a href="https://crisbraatz.github.io/posts/2021-nba-mvp-award-share-part-i-scrap/">post</a>, I built two datasets, one for <a href="https://raw.githubusercontent.com/crisbraatz/NBA-MVP-Award-Share-Scrap/main/CSVs/df_1980_2020.csv">training</a> and another one for <a href="https://raw.githubusercontent.com/crisbraatz/NBA-MVP-Award-Share-Scrap/main/CSVs/df_2021.csv">production</a>. Without further ado, let&rsquo;s predict the 2021 NBA MVP award share.</p>
+<h2 id="requirements">Requirements</h2>
+<p>We will use:</p>
+<ul>
+<li>A <a href="https://colab.research.google.com">Google Colab</a> account</li>
+</ul>
+<p>But, if you prefer to do it locally, you will need:</p>
+<ul>
+<li><a href="https://www.python.org">Python</a></li>
+<li><a href="https://matplotlib.org">Matplotlib</a></li>
+<li><a href="https://numpy.org/">NumPy</a></li>
+<li><a href="https://pandas.pydata.org">Pandas</a></li>
+<li><a href="https://scikit-learn.org/stable/">Scikit-learn</a></li>
+<li><a href="https://seaborn.pydata.org">Seaborn</a></li>
+<li>An IDE of your preference (I highly recommend <a href="https://jupyter.org">Jupyter</a>)</li>
+</ul>
+<h2 id="lets-get-to-work">Let&rsquo;s get to work</h2>
+<h3 id="basic-setup">Basic setup</h3>
+<p>First, create a code cell including all the libraries that are going to be used:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#f92672">as</span> plt
+<span style="color:#f92672">import</span> numpy <span style="color:#f92672">as</span> np
+<span style="color:#f92672">import</span> pandas <span style="color:#f92672">as</span> pd
+<span style="color:#f92672">import</span> seaborn <span style="color:#f92672">as</span> sns
+<span style="color:#f92672">from</span> sklearn <span style="color:#f92672">import</span> metrics
+<span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> LogisticRegression
+<span style="color:#f92672">from</span> sklearn.metrics <span style="color:#f92672">import</span> confusion_matrix
+<span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> GridSearchCV, StratifiedKFold
+<span style="color:#f92672">from</span> sklearn.preprocessing <span style="color:#f92672">import</span> MinMaxScaler
+<span style="color:#f92672">import</span> warnings
+warnings<span style="color:#f92672">.</span>filterwarnings(<span style="color:#e6db74">&#39;ignore&#39;</span>)
+<span style="color:#f92672">from</span> google.colab <span style="color:#f92672">import</span> drive <span style="color:#75715e"># Import only if you are using Google Colab</span>
+</code></pre></div><p>Then, another one to import the training dataset from the Google Colab session:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#39;df_1980_2020.csv&#39;</span>, sep <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;,&#39;</span>, decimal <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;.&#39;</span>)
+</code></pre></div><h3 id="more-data">More data</h3>
+<p>First, execute <code>df_train.info()</code> to visualize the current dataset structure. After analyzing it, start by splitting the string <code>Overall</code> column that is formatted as <code>12-34</code>, where the left side has the team wins and the right has the losses, into two new columns. Also, generate a percentage of wins column derived from those two:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train[<span style="color:#e6db74">&#39;Wins&#39;</span>] <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>Overall<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;-&#39;</span>)[<span style="color:#ae81ff">0</span>])<span style="color:#f92672">.</span>astype(int)
+df_train[<span style="color:#e6db74">&#39;Losses&#39;</span>] <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>Overall<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;-&#39;</span>)[<span style="color:#ae81ff">1</span>])<span style="color:#f92672">.</span>astype(int)
+df_train[<span style="color:#e6db74">&#39;W/L%&#39;</span>] <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>Wins <span style="color:#f92672">/</span> (df_train<span style="color:#f92672">.</span>Wins <span style="color:#f92672">+</span> df_train<span style="color:#f92672">.</span>Losses)
+</code></pre></div><p>Then, create two new columns, the second one using the first two columns generated in the previous step:</p>
+<ul>
+<li>Percentage of games started</li>
+<li>Percentage of games played</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train[<span style="color:#e6db74">&#39;GS%&#39;</span>] <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>GS <span style="color:#f92672">/</span> df_train<span style="color:#f92672">.</span>G
+df_train[<span style="color:#e6db74">&#39;GP%&#39;</span>] <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>G <span style="color:#f92672">/</span> (df_train<span style="color:#f92672">.</span>Wins <span style="color:#f92672">+</span> df_train<span style="color:#f92672">.</span>Losses)
+</code></pre></div><p>Finally, add two last columns, which are the most important to the upcoming training:</p>
+<ul>
+<li>The player ranking in the MVP award share based on the <code>Pts Won</code> column</li>
+<li>1 for the first ranked player, 0 for the rest of them</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train[<span style="color:#e6db74">&#39;MVP Rank&#39;</span>] <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#39;Season&#39;</span>)[<span style="color:#e6db74">&#39;Pts Won&#39;</span>]<span style="color:#f92672">.</span>rank(ascending <span style="color:#f92672">=</span> False, method <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;dense&#39;</span>)
+df_train[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>where(df_train[<span style="color:#e6db74">&#39;MVP Rank&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>)
+</code></pre></div><p>To sneak peek at the revamped structure, execute <code>df_train.tail()</code>.</p>
+<h3 id="keeping-focus">Keeping focus</h3>
+<p>Having all the extra needed columns generated, check the correlation between all the variables against the <code>Won MVP</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">corr <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>corr(method <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;pearson&#39;</span>)
+won_mvp_corr <span style="color:#f92672">=</span> corr[[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]]
+won_mvp_corr[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]<span style="color:#f92672">.</span>abs()<span style="color:#f92672">.</span>sort_values()
+</code></pre></div><pre><code>ORB%        0.001971
+3PAr        0.007123
+Season      0.007830
+TOV%        0.012957
+Age         0.013430
+BLK%        0.014955
+3P%         0.017698
+FTr         0.019898
+STL%        0.020580
+PF          0.024407
+FT%         0.026428
+TRB%        0.028021
+eFG%        0.029737
+2P%         0.030624
+FG%         0.031512
+DRB%        0.037249
+TS%         0.039077
+3PA         0.043093
+3P          0.044994
+OBPM        0.047830
+G           0.049611
+GP%         0.049865
+DBPM        0.051239
+ORB         0.054301
+BPM         0.055864
+BLK         0.068644
+GS%         0.070126
+Rk          0.071751
+Losses      0.073789
+Wins        0.074346
+AST%        0.075538
+W/L%        0.076017
+MP          0.078893
+WS/48       0.083676
+GS          0.085250
+STL         0.087542
+TRB         0.094399
+USG%        0.094822
+AST         0.107452
+DRB         0.107502
+PER         0.108560
+TOV         0.111627
+2PA         0.121173
+FGA         0.122489
+2P          0.133230
+FG          0.135866
+PTS         0.143236
+DWS         0.148693
+FTA         0.150863
+FT          0.156370
+MVP Rank    0.199272
+WS          0.208869
+OWS         0.215197
+Pts Max     0.242290
+VORP        0.258881
+Pts Won     0.700845
+Share       0.723829
+First       0.899223
+Won MVP     1.000000
+Name: Won MVP, dtype: float64
+</code></pre><p>Aside from the <code>Won MVP</code>, <code>First</code>, <code>Share</code>, <code>Pts Won</code>, <code>Pts Max</code>, <code>MVP Rank</code> and <code>Season</code> variables which can not be used as features for the machine learning model because the production dataset does not have them, the correlations are weak. Why? Because by executing <code>df_train.Player.count()</code>, it results in 19.111 players through 42 seasons, which it is an average of over 455 players per season.</p>
+<p>A litte diving into the NBA world and it can be asserted that just a couple of dozens of players receive atleast one vote, which it is just a litter under 3% of the average total players per season. Again, why? Because the media votes on theirs top players of the season, which are commonly the higher scorers, the most efficents, playing in the best teams, and so on.</p>
+<p>There are a few stats that can be used to filter the dataset, but it can wrongly skip some notable players. For example, training including only players that averaged more than 20 points per game would left off Steve Nash, who won it in 2005 and 2006. That means only players whom received atleast one vote in the award share, no matter their stats, should remain in the dataset:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train_filtered <span style="color:#f92672">=</span> df_train[df_train[<span style="color:#e6db74">&#39;Pts Won&#39;</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>]
+</code></pre></div><p>Executing <code>df_train_filtered.Player.count()</code>, it results in 665 players through 42 seasons, which it is an average of almost 16 players per season. Checking the correlations again:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">corr <span style="color:#f92672">=</span> df_train_filtered<span style="color:#f92672">.</span>corr(method <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;pearson&#39;</span>)
+won_mvp_corr <span style="color:#f92672">=</span> corr[[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]]
+won_mvp_corr[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]<span style="color:#f92672">.</span>abs()<span style="color:#f92672">.</span>sort_values()
+</code></pre></div><pre><code>ORB%        0.000665
+ORB         0.012516
+Pts Max     0.018585
+Age         0.032404
+BLK%        0.033425
+Season      0.039551
+FTr         0.040340
+TOV%        0.041222
+3P%         0.041356
+3PAr        0.042820
+GS%         0.046133
+STL%        0.049110
+BLK         0.050002
+STL         0.064951
+3PA         0.070115
+TRB%        0.073317
+GS          0.076909
+3P          0.078135
+G           0.079932
+FG%         0.080351
+FT%         0.086777
+DRB%        0.092919
+GP%         0.096390
+TRB         0.097643
+MP          0.102029
+PF          0.103916
+AST         0.105574
+2P%         0.115179
+eFG%        0.123226
+AST%        0.123564
+DRB         0.130524
+2PA         0.132908
+TOV         0.140403
+TS%         0.158148
+2P          0.167523
+FTA         0.169279
+FGA         0.177541
+FT          0.195539
+USG%        0.196267
+DBPM        0.201816
+DWS         0.208722
+FG          0.217755
+PTS         0.238142
+Rk          0.240790
+Wins        0.252158
+Losses      0.265695
+W/L%        0.276278
+OWS         0.336012
+OBPM        0.336594
+PER         0.350622
+BPM         0.373409
+WS/48       0.387128
+VORP        0.388908
+WS          0.395587
+MVP Rank    0.409940
+Pts Won     0.688952
+Share       0.719259
+First       0.892886
+Won MVP     1.000000
+Name: Won MVP, dtype: float64
+</code></pre><p>Take the <code>WS</code> variable, for example, it almost doubled its correlation.</p>
+<h3 id="understanding-the-data">Understanding the data</h3>
+<p>Before hand, create a generic method to plot two to be ordered variables:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">plot_two_variables</span>(df, title, var1, var1_order, var2, var2_order):
+    plt<span style="color:#f92672">.</span>style<span style="color:#f92672">.</span>use(<span style="color:#e6db74">&#39;fivethirtyeight&#39;</span>)
+    fig, ax <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots()
+
+    mvp <span style="color:#f92672">=</span> df[df[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>]
+    non_mvp <span style="color:#f92672">=</span> df[df[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>]
+
+    ax<span style="color:#f92672">.</span>scatter(mvp[var1], mvp[var2], label <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;MVP&#39;</span>, marker <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;^&#39;</span>, s <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>)
+    ax<span style="color:#f92672">.</span>scatter(non_mvp[var1], non_mvp[var2], label <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Not MVP&#39;</span>, alpha <span style="color:#f92672">=</span> <span style="color:#f92672">.</span><span style="color:#ae81ff">2</span>)
+
+    ax<span style="color:#f92672">.</span>legend(loc <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;best&#39;</span>, prop <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;size&#39;</span>: <span style="color:#ae81ff">12</span>})
+
+    ax<span style="color:#f92672">.</span>set_xlabel(var1, fontsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>)
+    ax<span style="color:#f92672">.</span>set_ylabel(var2, fontsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>)
+
+    ax<span style="color:#f92672">.</span>set_xlim(ax<span style="color:#f92672">.</span>get_xlim()[::var1_order])
+    ax<span style="color:#f92672">.</span>set_ylim(ax<span style="color:#f92672">.</span>get_ylim()[::var2_order])
+
+    fig<span style="color:#f92672">.</span>suptitle(title, weight <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;bold&#39;</span>, size <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>)
+
+    fig<span style="color:#f92672">.</span>text(x <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0.02</span>, y <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0.08</span>,
+        s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;_______________________________________________________&#39;</span>,
+        fontsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>, color <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;grey&#39;</span>, horizontalalignment <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;left&#39;</span>, alpha <span style="color:#f92672">=</span> <span style="color:#f92672">.</span><span style="color:#ae81ff">2</span>)
+
+    fig<span style="color:#f92672">.</span>text(x <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0.02</span>, y <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0.16</span>,
+        s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;https://crisbraatz.github.io&#39;</span>,
+        fontsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>, color <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;grey&#39;</span>, horizontalalignment <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;left&#39;</span>)
+</code></pre></div><p>First, how were the players contribution to the team wins against the overall seed of their respective teams?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">plot_two_variables(df_train_filtered, <span style="color:#e6db74">&#39;Player Win Share VS Team Overall Seed&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;WS&#39;</span>, <span style="color:#ae81ff">1</span>)
+</code></pre></div><p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-1.png" alt="Image"></p>
+<p>Notice that players who won it had a greater impact in the team wins, which translated to a better team ranking. But there are three players that won it dispite their teams not being ranked in the top 5:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train_filtered[(df_train_filtered[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;</span> (df_train_filtered[<span style="color:#e6db74">&#39;Rk&#39;</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">5</span>)][[<span style="color:#e6db74">&#39;Player&#39;</span>, <span style="color:#e6db74">&#39;Tm&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;Season&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;Overall&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>]]
+</code></pre></div><ul>
+<li>Moses Malone of the Houston Rockets in 1982</li>
+<li>Michael Jordan of the Chicago Bulls in 1988</li>
+<li>Russell Westbrook of the Oklahoma City Thunder in 2017</li>
+</ul>
+<p>Take Russell Westbrook in 2017, for example, whom had a compeling story. His co star Kevin Durant left him in the previous season dissing his playing style. That fueled him to average a triple double for the season with 31.6 points, 10.7 rebounds and 10.4 assists while breaking the NBA record for most triple double games in a season. This feat came at the last game of the season in which he also hitted the game winner at the buzzer from the half court to clinch the last playoff spot. This type of info that is not purely a stat is not present in the dataset and it is hard to bring along.</p>
+<p>Next, how were the players scoring average against their efficiency rating?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">plot_two_variables(df_train_filtered, <span style="color:#e6db74">&#39;Points Per Game VS Efficiency Rating&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;PER&#39;</span>, <span style="color:#ae81ff">1</span>)
+</code></pre></div><p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-2.png" alt="Image"></p>
+<p>As expected, great players have higher scoring average and tend to be very efficient doing so. But, again, some exceptions:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train_filtered[(df_train_filtered[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;</span> (df_train_filtered[<span style="color:#e6db74">&#39;PTS&#39;</span>] <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">20</span>)][[<span style="color:#e6db74">&#39;Player&#39;</span>, <span style="color:#e6db74">&#39;Tm&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;Season&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;Overall&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>]]
+</code></pre></div><p>It results in Steve Nash of the Phoenix Suns in 2005 and 2006. Dispite averaging below 20 points per game, it was his all around game that led him to won it in two consecutive seasons. He turned the 24th team in 2004 into the 1st team in 2005 and kept them in the top 5 in 2006. That was an outstanding achievement which it is also not present in the dataset and it is also hard to bring along, because the need to consider multiple seasons and multi variables exponentially increases the complexity.</p>
+<p>Last, how were the teams overall seed against the value of replacement of its players?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">plot_two_variables(df_train_filtered, <span style="color:#e6db74">&#39;Team Overall Seed VS Player Value of Replacement&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;VORP&#39;</span>, <span style="color:#ae81ff">1</span>)
+</code></pre></div><p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-3.png" alt="Image"></p>
+<p>Same as the previous, players who won it are extremely valuable to their teams in case of an injury or a trade. No analysis is needed since the exceptions are the same of the first one.</p>
+<h3 id="practice-time">Practice time</h3>
+<p>First, build the features to be used in the machine learning model, in other words, define all the variables:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build_features</span>(df_train, df_test):
+    mms <span style="color:#f92672">=</span> MinMaxScaler()
+
+    x_train_mms <span style="color:#f92672">=</span> mms<span style="color:#f92672">.</span>fit_transform(df_train[[<span style="color:#e6db74">&#39;ORB%&#39;</span>, <span style="color:#e6db74">&#39;ORB&#39;</span>, <span style="color:#e6db74">&#39;BLK%&#39;</span>, <span style="color:#e6db74">&#39;FTr&#39;</span>, <span style="color:#e6db74">&#39;Age&#39;</span>, <span style="color:#e6db74">&#39;TOV%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;3PAr&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;STL%&#39;</span>, <span style="color:#e6db74">&#39;GS&#39;</span>, <span style="color:#e6db74">&#39;TRB%&#39;</span>,
+                                              <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3PA&#39;</span>, <span style="color:#e6db74">&#39;DRB%&#39;</span>, <span style="color:#e6db74">&#39;G&#39;</span>, <span style="color:#e6db74">&#39;3P&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;2P%&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;PF&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>,
+                                              <span style="color:#e6db74">&#39;eFG%&#39;</span>, <span style="color:#e6db74">&#39;DRB&#39;</span>, <span style="color:#e6db74">&#39;AST%&#39;</span>, <span style="color:#e6db74">&#39;2PA&#39;</span>, <span style="color:#e6db74">&#39;TOV&#39;</span>, <span style="color:#e6db74">&#39;TS%&#39;</span>, <span style="color:#e6db74">&#39;2P&#39;</span>, <span style="color:#e6db74">&#39;FTA&#39;</span>, <span style="color:#e6db74">&#39;FGA&#39;</span>, <span style="color:#e6db74">&#39;USG%&#39;</span>, <span style="color:#e6db74">&#39;DBPM&#39;</span>, <span style="color:#e6db74">&#39;FT&#39;</span>,
+                                              <span style="color:#e6db74">&#39;DWS&#39;</span>, <span style="color:#e6db74">&#39;FG&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;OBPM&#39;</span>, <span style="color:#e6db74">&#39;OWS&#39;</span>, <span style="color:#e6db74">&#39;PER&#39;</span>, <span style="color:#e6db74">&#39;BPM&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;VORP&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>,
+                                              <span style="color:#e6db74">&#39;Wins&#39;</span>, <span style="color:#e6db74">&#39;Losses&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>, <span style="color:#e6db74">&#39;GS%&#39;</span>, <span style="color:#e6db74">&#39;GP%&#39;</span>]])
+
+    x_test_mms <span style="color:#f92672">=</span> mms<span style="color:#f92672">.</span>transform(df_test[[<span style="color:#e6db74">&#39;ORB%&#39;</span>, <span style="color:#e6db74">&#39;ORB&#39;</span>, <span style="color:#e6db74">&#39;BLK%&#39;</span>, <span style="color:#e6db74">&#39;FTr&#39;</span>, <span style="color:#e6db74">&#39;Age&#39;</span>, <span style="color:#e6db74">&#39;TOV%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;3PAr&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;STL%&#39;</span>, <span style="color:#e6db74">&#39;GS&#39;</span>, <span style="color:#e6db74">&#39;TRB%&#39;</span>,
+                                        <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3PA&#39;</span>, <span style="color:#e6db74">&#39;DRB%&#39;</span>, <span style="color:#e6db74">&#39;G&#39;</span>, <span style="color:#e6db74">&#39;3P&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;2P%&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;PF&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>,
+                                        <span style="color:#e6db74">&#39;eFG%&#39;</span>, <span style="color:#e6db74">&#39;DRB&#39;</span>, <span style="color:#e6db74">&#39;AST%&#39;</span>, <span style="color:#e6db74">&#39;2PA&#39;</span>, <span style="color:#e6db74">&#39;TOV&#39;</span>, <span style="color:#e6db74">&#39;TS%&#39;</span>, <span style="color:#e6db74">&#39;2P&#39;</span>, <span style="color:#e6db74">&#39;FTA&#39;</span>, <span style="color:#e6db74">&#39;FGA&#39;</span>, <span style="color:#e6db74">&#39;USG%&#39;</span>, <span style="color:#e6db74">&#39;DBPM&#39;</span>, <span style="color:#e6db74">&#39;FT&#39;</span>,
+                                        <span style="color:#e6db74">&#39;DWS&#39;</span>, <span style="color:#e6db74">&#39;FG&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;OBPM&#39;</span>, <span style="color:#e6db74">&#39;OWS&#39;</span>, <span style="color:#e6db74">&#39;PER&#39;</span>, <span style="color:#e6db74">&#39;BPM&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;VORP&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>,
+                                        <span style="color:#e6db74">&#39;Wins&#39;</span>, <span style="color:#e6db74">&#39;Losses&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>, <span style="color:#e6db74">&#39;GS%&#39;</span>, <span style="color:#e6db74">&#39;GP%&#39;</span>]])
+
+    x_train <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>hstack([x_train_mms])
+    x_test <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>hstack([x_test_mms])
+
+    y_train <span style="color:#f92672">=</span> df_train[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]<span style="color:#f92672">.</span>values<span style="color:#f92672">.</span>reshape(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+    y_test <span style="color:#f92672">=</span> df_test[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]<span style="color:#f92672">.</span>values<span style="color:#f92672">.</span>reshape(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+
+    <span style="color:#66d9ef">return</span> x_train, y_train, x_test, y_test
+</code></pre></div><p>Then, build the logistic regression model:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">model <span style="color:#f92672">=</span> LogisticRegression(solver <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;liblinear&#39;</span>)
+</code></pre></div><p>For every season of the iteration, the following code will train all the seasons except the current one, and test only the current one:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train_predicted <span style="color:#f92672">=</span> []
+k <span style="color:#f92672">=</span> <span style="color:#ae81ff">2020</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1980</span>
+results_matrix <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros(shape <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, k, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">2</span>))
+<span style="color:#66d9ef">for</span> season <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1980</span>, <span style="color:#ae81ff">2021</span>):
+    fold <span style="color:#f92672">=</span> season <span style="color:#f92672">-</span> <span style="color:#ae81ff">1980</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+    df_train <span style="color:#f92672">=</span> df_train_filtered[df_train_filtered<span style="color:#f92672">.</span>Season <span style="color:#f92672">!=</span> season]
+    df_test <span style="color:#f92672">=</span> df_train_filtered[df_train_filtered<span style="color:#f92672">.</span>Season <span style="color:#f92672">==</span> season]
+
+    x_train, y_train, x_test, y_test <span style="color:#f92672">=</span> build_features(df_train, df_test)
+
+    model<span style="color:#f92672">.</span>fit(x_train, y_train)
+
+    y_pred_train <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>predict_proba(x_train)[:, <span style="color:#ae81ff">1</span>]
+    df_train_rank <span style="color:#f92672">=</span> df_train<span style="color:#f92672">.</span>copy()
+    df_train_rank[<span style="color:#e6db74">&#39;MVP Odds&#39;</span>] <span style="color:#f92672">=</span> y_pred_train
+
+    df_train_rank[<span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>] <span style="color:#f92672">=</span> df_train_rank<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#39;Season&#39;</span>)[<span style="color:#e6db74">&#39;MVP Odds&#39;</span>]<span style="color:#f92672">.</span>rank(ascending <span style="color:#f92672">=</span> False, method <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;dense&#39;</span>)
+
+    df_train_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">=</span> df_train_rank[<span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>]
+    df_train_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>]<span style="color:#f92672">.</span>loc[df_train_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    df_train_rank_won_mvp <span style="color:#f92672">=</span> df_train_rank[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]
+    df_train_rank_predicted_mvp_winner <span style="color:#f92672">=</span> df_train_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>]
+
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>accuracy_score(df_train_rank_won_mvp, df_train_rank_predicted_mvp_winner)
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>precision_score(df_train_rank_won_mvp, df_train_rank_predicted_mvp_winner)
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>recall_score(df_train_rank_won_mvp, df_train_rank_predicted_mvp_winner)
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>f1_score(df_train_rank_won_mvp, df_train_rank_predicted_mvp_winner)
+
+    y_pred_test <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>predict_proba(x_test)[:, <span style="color:#ae81ff">1</span>]
+    df_test_rank <span style="color:#f92672">=</span> df_test<span style="color:#f92672">.</span>copy()
+    df_test_rank[<span style="color:#e6db74">&#39;MVP Odds&#39;</span>] <span style="color:#f92672">=</span> y_pred_test
+
+    df_train_predicted<span style="color:#f92672">.</span>append(df_test_rank)
+
+    df_test_rank[<span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>] <span style="color:#f92672">=</span> df_test_rank<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#39;Season&#39;</span>)[<span style="color:#e6db74">&#39;MVP Odds&#39;</span>]<span style="color:#f92672">.</span>rank(ascending <span style="color:#f92672">=</span> False, method <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;dense&#39;</span>)
+
+    df_test_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">=</span> df_test_rank[<span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>]
+    df_test_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>]<span style="color:#f92672">.</span>loc[df_test_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+    df_test_rank_won_mvp <span style="color:#f92672">=</span> df_test_rank[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]
+    df_test_rank_predicted_mvp_winner <span style="color:#f92672">=</span> df_test_rank[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>]
+
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>accuracy_score(df_test_rank_won_mvp, df_test_rank_predicted_mvp_winner)
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>precision_score(df_test_rank_won_mvp, df_test_rank_predicted_mvp_winner)
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>recall_score(df_test_rank_won_mvp, df_test_rank_predicted_mvp_winner)
+    results_matrix[<span style="color:#ae81ff">0</span>, fold, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> metrics<span style="color:#f92672">.</span>f1_score(df_test_rank_won_mvp, df_test_rank_predicted_mvp_winner)
+</code></pre></div><p>Generating the results:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Algorithm: Logistic Regression&#39;</span>)
+<span style="color:#66d9ef">print</span>()
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Train&#39;</span>)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Accuracy:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>mean())
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Precision:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>mean())
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Coverage:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>mean())
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;F Measure:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>mean())
+<span style="color:#66d9ef">print</span>()
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Test&#39;</span>)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Accuracy:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>mean())
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Precision:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>mean())
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;Coverage:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>mean())
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;F Measure:&#39;</span>, results_matrix[<span style="color:#ae81ff">0</span>, :, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>mean())
+</code></pre></div><pre><code>Algorithm: Logistic Regression
+
+Train
+Accuracy: 0.9703201884925161
+Precision: 0.759375
+Coverage: 0.759375
+F Measure: 0.759375
+
+Test
+Accuracy: 0.962096742520604
+Precision: 0.7
+Coverage: 0.7
+F Measure: 0.7
+</code></pre><p>It looks good and we will dive into it&hellip; later.</p>
+<h3 id="analysis">Analysis</h3>
+<p>Before hand, execute <code>df_train_predicted = pd.concat(df_train_predicted)</code>.</p>
+<p>First, who were the players who won it but the prediction missed it?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train_predicted[(df_train_predicted[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;</span> (df_train_predicted[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>)][[<span style="color:#e6db74">&#39;Player&#39;</span>, <span style="color:#e6db74">&#39;Tm&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;Season&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;Overall&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>, <span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>]]
+</code></pre></div><p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-4.png" alt="Image"></p>
+<p>Remember Russell Westbrook, Steve Nash? Here they are alongside a few others.</p>
+<p>Next, who were the players that did not won it but the prediction said they did?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train_predicted[(df_train_predicted[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;</span> (df_train_predicted[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>)][[<span style="color:#e6db74">&#39;Player&#39;</span>, <span style="color:#e6db74">&#39;Tm&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;Season&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;Overall&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>, <span style="color:#e6db74">&#39;MVP Rank&#39;</span>]]
+</code></pre></div><p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-5.png" alt="Image"></p>
+<p>This are the players that were benefited for the lack of non-stats info in the dataset.</p>
+<p>Last, the correct predictions. Since it is a bigger list than the others, just the code snippet:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_train_predicted[(df_train_predicted[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;</span> (df_train_predicted[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>)][[<span style="color:#e6db74">&#39;Player&#39;</span>, <span style="color:#e6db74">&#39;Tm&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;Season&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;Overall&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>]]
+</code></pre></div><p>Summing it all up while diving into the metrics, the confusion matrix:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">predicted <span style="color:#f92672">=</span> df_train_predicted[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>]
+ground_truth <span style="color:#f92672">=</span> df_train_predicted[<span style="color:#e6db74">&#39;Won MVP&#39;</span>]
+
+cm <span style="color:#f92672">=</span> confusion_matrix(ground_truth, predicted)
+
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Confusion Matrix - MVP Prediction&#39;</span>)
+sns<span style="color:#f92672">.</span>heatmap(cm, annot <span style="color:#f92672">=</span> True, fmt <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;.2f&#39;</span>, cmap <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;rocket_r&#39;</span>)
+
+plt<span style="color:#f92672">.</span>text(x <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0.02</span>, y <span style="color:#f92672">=</span> <span style="color:#ae81ff">2.16</span>,
+    s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;_______________________________________________________&#39;</span>,
+    fontsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>, color <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;grey&#39;</span>, horizontalalignment <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;left&#39;</span>, alpha <span style="color:#f92672">=</span> <span style="color:#f92672">.</span><span style="color:#ae81ff">2</span>)
+
+plt<span style="color:#f92672">.</span>text(x <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0.02</span>, y <span style="color:#f92672">=</span> <span style="color:#ae81ff">2.32</span>,
+    s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;https://crisbraatz.github.io&#39;</span>,
+    fontsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>, color <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;grey&#39;</span>, horizontalalignment <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;left&#39;</span>)
+
+plt<span style="color:#f92672">.</span>show()
+</code></pre></div><p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-6.png" alt="Image"></p>
+<p>The model made 24 incorret predictions within 665 records, impling 12 false negatives and 12 false positives. It also made 641 correct predictions, being 612 of non winning players and 29 of winning ones.</p>
+<h3 id="production-time">Production time</h3>
+<p>First, import the production dataset from the Google Colab session:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_production <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#39;df_2021.csv&#39;</span>, sep <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;,&#39;</span>, decimal <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;.&#39;</span>)
+</code></pre></div><p>As well as did in the training, generate the same columns except the <code>MVP Rank</code> and fill the <code>Won MVP</code> with zeros:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_production[<span style="color:#e6db74">&#39;Wins&#39;</span>] <span style="color:#f92672">=</span> df_production<span style="color:#f92672">.</span>Overall<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;-&#39;</span>)[<span style="color:#ae81ff">0</span>])<span style="color:#f92672">.</span>astype(int)
+df_production[<span style="color:#e6db74">&#39;Losses&#39;</span>] <span style="color:#f92672">=</span> df_production<span style="color:#f92672">.</span>Overall<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;-&#39;</span>)[<span style="color:#ae81ff">1</span>])<span style="color:#f92672">.</span>astype(int)
+df_production[<span style="color:#e6db74">&#39;W/L%&#39;</span>] <span style="color:#f92672">=</span> df_production<span style="color:#f92672">.</span>Wins <span style="color:#f92672">/</span> (df_production<span style="color:#f92672">.</span>Wins <span style="color:#f92672">+</span> df_production<span style="color:#f92672">.</span>Losses)
+
+df_production[<span style="color:#e6db74">&#39;GS%&#39;</span>] <span style="color:#f92672">=</span> df_production<span style="color:#f92672">.</span>GS <span style="color:#f92672">/</span> df_production<span style="color:#f92672">.</span>G
+df_production[<span style="color:#e6db74">&#39;GP%&#39;</span>] <span style="color:#f92672">=</span> df_production<span style="color:#f92672">.</span>G <span style="color:#f92672">/</span> (df_production<span style="color:#f92672">.</span>Wins <span style="color:#f92672">+</span> df_production<span style="color:#f92672">.</span>Losses)
+
+df_production[<span style="color:#e6db74">&#39;Won MVP&#39;</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</code></pre></div><p>The training dataset was filtered by the <code>Pts Won</code> column that does not exist in the production dataset. The question is, which filter to apply knowing it has 626 players by executing <code>df_production.Player.count()</code> and only a few dozens will receive votes?</p>
+<p>There are a few ways to do it, but it can end up skipping some key players if choosing stats like points per game, player efficiency rating and so on. Considering all the analysis that were made, the best filter here is a combination of games started and games played. This season had a shorter off season due to the latest around the world that delayed the conclusion of the previous season, which made more players, including stars, suffering more injuries this season. So, filter by players who started 90% of the games and played 70% of it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_production <span style="color:#f92672">=</span> df_production[(df_production[<span style="color:#e6db74">&#39;GS%&#39;</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.9</span>) <span style="color:#f92672">&amp;</span> (df_production[<span style="color:#e6db74">&#39;GP%&#39;</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.7</span>)]
+</code></pre></div><p>Executing <code>df_production.Player.count()</code> again, it results in 82 players.</p>
+<p>Then, build the model features and predict the odds:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">x_train, y_train, x_test, y_test <span style="color:#f92672">=</span> build_features(df_train_filtered, df_production)
+x_complete <span style="color:#f92672">=</span> x_train
+y_complete <span style="color:#f92672">=</span> y_train
+
+model<span style="color:#f92672">.</span>fit(x_complete, y_complete)
+
+y_pred_prob <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>predict_proba(x_test)
+df_production[<span style="color:#e6db74">&#39;MVP Odds&#39;</span>] <span style="color:#f92672">=</span> y_pred_prob[:, <span style="color:#ae81ff">1</span>]
+
+df_production[<span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>] <span style="color:#f92672">=</span> df_production<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#39;Season&#39;</span>)[<span style="color:#e6db74">&#39;MVP Odds&#39;</span>]<span style="color:#f92672">.</span>rank(ascending <span style="color:#f92672">=</span> False, method <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;dense&#39;</span>)
+
+df_production[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">=</span> df_production[<span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>]
+df_production[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>]<span style="color:#f92672">.</span>loc[df_production[<span style="color:#e6db74">&#39;Predicted MVP Winner&#39;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</code></pre></div><p>Generating the results:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">df_production<span style="color:#f92672">.</span>sort_values(by <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;Predicted MVP Rank&#39;</span>], ascending <span style="color:#f92672">=</span> True)[[<span style="color:#e6db74">&#39;Player&#39;</span>, <span style="color:#e6db74">&#39;Tm&#39;</span>, <span style="color:#e6db74">&#39;MP&#39;</span>, <span style="color:#e6db74">&#39;PTS&#39;</span>, <span style="color:#e6db74">&#39;TRB&#39;</span>, <span style="color:#e6db74">&#39;AST&#39;</span>, <span style="color:#e6db74">&#39;STL&#39;</span>, <span style="color:#e6db74">&#39;BLK&#39;</span>, <span style="color:#e6db74">&#39;FG%&#39;</span>, <span style="color:#e6db74">&#39;3P%&#39;</span>, <span style="color:#e6db74">&#39;FT%&#39;</span>, <span style="color:#e6db74">&#39;WS&#39;</span>, <span style="color:#e6db74">&#39;WS/48&#39;</span>, <span style="color:#e6db74">&#39;Season&#39;</span>, <span style="color:#e6db74">&#39;Rk&#39;</span>, <span style="color:#e6db74">&#39;Overall&#39;</span>, <span style="color:#e6db74">&#39;W/L%&#39;</span>, <span style="color:#e6db74">&#39;MVP Odds&#39;</span>]]<span style="color:#f92672">.</span>head(<span style="color:#ae81ff">10</span>)
+</code></pre></div><p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-7.png" alt="Image"></p>
+<p>According to the model, <em><strong>Nikola Jokić of the Denver Nuggets will win the 2021 NBA MVP award share</strong></em>.</p>
+<p>He is followed by:</p>
+<ul>
+<li>Joel Embiid of the Philadelphia 76ers</li>
+<li>Giannis Antetokounmpo of the Milwaukee Bucks</li>
+</ul>
+<p>The official results are yet to be released after the season conclusion on May 16, 2021, but the NBA has announced the finalists on May 20, 2021:</p>
+<p><img src="/posts/2021-nba-mvp-award-share-part-ii-machine-learning/img/post-8.png" alt="Image"></p>
+<p>They are, alphabetically ordered:</p>
+<ol>
+<li>Stephen Curry of the Golden State Warriors</li>
+<li>Joel Embiid of the Philadelphia 76ers</li>
+<li>Nikola Jokić of the Denver Nuggets</li>
+</ol>
+<p>Since the databases have been built on May 19, 2021, three day after the conclusion of the season, it is safe to say that the model is highly accurate, correctly predicting 2 of the top 3 players of the season, including the expected winner.</p>
+<p><em><strong>P.S. you can check the GitHub repository <a href="https://github.com/crisbraatz/NBA-MVP-Award-Share-Machine-Learning">here</a> or the Google Colab <a href="https://colab.research.google.com/drive/1GznYuGo34GOvgtLe2_beRDqqfww0JDtJ?usp=sharing">here</a>.</strong></em></p>
+<p>Thanks for reading it!</p>
+]]></content>
+        </item>
         
         <item>
             <title>2021 NBA MVP Award Share - Part I - Scrap</title>
