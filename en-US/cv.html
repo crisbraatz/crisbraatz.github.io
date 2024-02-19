@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>crisbraatz</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.33.2/css/jquery.terminal.min.css" rel="stylesheet"/>
+    <style>body { width: 100%; font-size: 18px; }</style>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+    <link rel="manifest" href="../img/site.webmanifest">
+    <link rel="mask-icon" href="../img/safari-pinned-tab.svg" color="#48aaf8">
+    <meta name="msapplication-TileColor" content="#48aaf8">
+    <meta name="theme-color" content="#000000">
+
+    <meta name="title" property="og:title" content="crisbraatz">
+    <meta name="image" property="og:image" content="https://raw.githubusercontent.com/crisbraatz/crisbraatz.github.io/main/img/crisbraatz.png">
+    <meta name="description" property="og:description" content="CV">
+    <meta name="author" content="Cristopher Braatz Cardoso">
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.33.2/js/jquery.terminal.min.js"></script>
+    <script src="https://unpkg.com/jquery.terminal/js/autocomplete_menu.js"></script>
+</head>
+
+<body>
+    <script>
+        jQuery(document).ready(function($) {
+            var animation = false;
+            var availableCommands = ["all", "about", "featured", "experience", "education", "licensesAndCertifications", "skills", "languages", "contact", "help", "exit"];
+
+            $("body").terminal(function(command, term) {
+
+                function help() {
+                    term.echo("");
+                    term.echo("Available commands: " + availableCommands.join(" | "));
+                    term.echo("");
+                }
+
+                function about() {
+                    term.echo("");
+                    term.echo("I am a result-driven and test-driven software developer");
+                    term.echo("with excellent problem-solving skills");
+                    term.echo("who will do the best it can to achieve the goals set.");
+                    term.echo("");
+                    term.echo("Having gone through four totally different projects within the same company");
+                    term.echo("helped me gain technical and interpersonal experience in dealing with different products and business");
+                    term.echo("as well as people with different background and culture.");
+                    term.echo("");
+                }
+
+                function featured() {
+                    term.echo("");
+                    term.echo("MetaphonePtBr");
+                    term.echo("");
+                    term.echo("MetaphonePtBr is a text transformation algorithm");
+                    term.echo("based on phonetic rules of the Portuguese Brazilian language.");
+                    term.echo("");
+                    term.echo("Link: https:\/\/www.nuget.org\/packages\/MetaphonePtBr");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("EnigmaSimulator");
+                    term.echo("");
+                    term.echo("EnigmaSimulator is an encryption/decryption application");
+                    term.echo("based on the Enigma machine.");
+                    term.echo("");
+                    term.echo("Link: https:\/\/crisbraatz.github.io\/EnigmaSimulator\/");
+                    term.echo("");
+                }
+
+                function experience() {
+                    term.echo("");
+                    term.echo("Jul 2019 - present");
+                    term.echo("Ambev Tech");
+                    term.echo("Senior .NET Development Leader");
+                    term.echo("");
+                    term.echo("Ambev Tech is the technology hub of Ambev, a Brazilian beverage company and the 4th largest company in the country belonging to the Anheuser-Busch InBev group, the largest beer manufacturer in the world.");
+                    term.echo("");
+                    term.echo("I am a development leader on one of the digital transformation projects that is replacing legacy systems with cloud-based microservices. My current role is to develop solutions to process and manage all orders from all branches in Brazil. I am also responsible for helping team members develop their stories, as well as guiding them in the technical evolution of their careers.");
+                    term.echo("");
+                    term.echo("We use microservices architecture in C# / .NET applications for Web APIs, event handlers and recurring tasks. The microservices data is maintained in PostgreSQL and SQL Server. Communication between microservices is done via Service Bus, gRPC and HTTP. The infrastructure uses Azure Kubernetes Service (AKS) to deploy microservice containers. Applications are monitored using DataDog and maintenance using Sentry. Through the CI/CD pipelines, we guarantee the quality of deliveries with unit, integrated and mutation tests.");
+                    term.echo("");
+                }
+
+                function education() {
+                    term.echo("");
+                    term.echo("2019 - 2021");
+                    term.echo("FURB");
+                    term.echo("Specialization, Data Science");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("2016 - 2018");
+                    term.echo("SENAI");
+                    term.echo("Undergraduate, Systems Analysis and Development");
+                    term.echo("");
+                }
+
+                function licensesAndCertifications() {
+                    term.echo("");
+                    term.echo("Feb - 2024");
+                    term.echo("AZ-204T00--A: Developing Solutions for Microsoft Azure");
+                    term.echo("Microsoft");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Jan - 2024");
+                    term.echo("MongoDB C# Developer Path");
+                    term.echo("MongoDB");
+                    term.echo("");
+                    term.echo("Credential: https:\/\/learn.mongodb.com\/c\/l2KBzn1SQgucLscQcr1K7Q");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Dec - 2023");
+                    term.echo("Datadog Fundamentals");
+                    term.echo("Datadog");
+                    term.echo("");
+                    term.echo("Credential: https:\/\/www.credly.com\/badges\/6959911d-60ac-4f18-867e-cf4ffa0fcb3c");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Dec - 2023");
+                    term.echo("Security Champions - White Belt");
+                    term.echo("AB InBev");
+                    term.echo("");
+                    term.echo("Credential: https:\/\/degreed.com\/pathway\/4927d4e382?orgsso=ambev");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Oct - 2023");
+                    term.echo("Foundational C# with Microsoft");
+                    term.echo("freeCodeCamp");
+                    term.echo("");
+                    term.echo("Credential: https:\/\/freecodecamp.org\/certification\/crisbraatz\/foundational-c-sharp-with-microsoft");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Jul - 2020");
+                    term.echo("Microsoft Certified: Azure Fundamentals");
+                    term.echo("Microsoft");
+                    term.echo("");
+                    term.echo("Credential: https:\/\/www.credly.com\/badges\/0dbaa22a-4c91-4523-9649-c44d4518ce00");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Feb - 2020");
+                    term.echo("English Level C2");
+                    term.echo("EF Standard English Test (EF SET)");
+                    term.echo("");
+                    term.echo("Credential: https:\/\/www.efset.org\/cert\/GpaHfC");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Sep - 2019");
+                    term.echo("Desenvolvedor de Sistemas C#");
+                    term.echo("ProWay");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Apr - 2019");
+                    term.echo("Roteamento e switching CCNA: Introdução às redes");
+                    term.echo("Cisco Networking Academy");
+                    term.echo("");
+                    term.echo("--------------------------------------------------");
+                    term.echo("");
+                    term.echo("Mar - 2018");
+                    term.echo("Fundamentos da Gestão de TI");
+                    term.echo("FGV Online");
+                    term.echo("");
+                }
+
+                function skills() {
+                    term.echo("");
+                    term.echo(".NET");
+                    term.echo("Agile Methodologies");
+                    term.echo("ASP.NET Web API");
+                    term.echo("Azure");
+                    term.echo("Azure DevOps");
+                    term.echo("Azure Key Vault");
+                    term.echo("Azure Kubernetes Service (AKS)");
+                    term.echo("Azure Service Bus");
+                    term.echo("Back-End Web Development");
+                    term.echo("C#");
+                    term.echo("Container Orchestration");
+                    term.echo("Containerization");
+                    term.echo("Continuous Integration and Continuous Delivery (CI/CD)");
+                    term.echo("DevOps");
+                    term.echo("Docker");
+                    term.echo("Domain-Driven Design (DDD)");
+                    term.echo("Git");
+                    term.echo("GitHub");
+                    term.echo("gRPC");
+                    term.echo("Helm Charts");
+                    term.echo("Java");
+                    term.echo("JSON");
+                    term.echo("JSON Web Token (JWT)");
+                    term.echo("Kanban");
+                    term.echo("Kubernetes");
+                    term.echo("Linux");
+                    term.echo("Markdown");
+                    term.echo("Message Broker");
+                    term.echo("Microservices");
+                    term.echo("Microsoft Azure");
+                    term.echo("Microsoft SQL Server");
+                    term.echo("MongoDB");
+                    term.echo("NoSQL");
+                    term.echo("Object-Oriented Programming (OOP)");
+                    term.echo("Pipelines");
+                    term.echo("PostgreSQL");
+                    term.echo("Protocol Buffers");
+                    term.echo("Python");
+                    term.echo("RabbitMQ");
+                    term.echo("RESTful WebServices");
+                    term.echo("Scrum");
+                    term.echo("Spring Boot");
+                    term.echo("SQL");
+                    term.echo("Team Development");
+                    term.echo("Team Leadership");
+                    term.echo("Team Mentoring");
+                    term.echo("Team Motivation");
+                    term.echo("Test Driven Development");
+                    term.echo("Tokenization");
+                    term.echo("YAML");
+                    term.echo("");
+                }
+
+                function languages() {
+                    term.echo("");
+                    term.echo("English");
+                    var bar_length = Math.round( 80 / 10);
+                    var bar_filled = Array(bar_length + 1).join("&#9611;");
+                    var bar_blank= Array(11 - bar_length).join("&#9617;");
+                    term.echo(bar_filled + bar_blank + " 80%")
+                    term.echo("")
+                    term.echo("Portuguese");
+                    var bar_length = Math.round( 100 / 10);
+                    var bar_filled = Array(bar_length + 1).join("&#9611;");
+                    var bar_blank= Array(11 - bar_length).join("&#9617;");
+                    term.echo(bar_filled + bar_blank + " 100%")
+                    term.echo("");
+                }
+
+                function contact() {
+                    term.echo("");
+                    term.echo("Email: crisbraatz@icloud.com");
+                    term.echo("GitHub: https:\/\/github.com\/crisbraatz");
+                    term.echo("LinkedIn: https:\/\/www.linkedin.com\/in\/crisbraatz\/?locale=en_US");
+                    term.echo("");
+                }
+
+                function progress(percent, width) {
+                    var size = Math.round(width*percent/100);
+                    var left = "", taken = "", i;
+                    for (i=size; i--;) {
+                        taken += "=";
+                    }
+                    if (taken.length > 0) {
+                        taken = taken.replace(/=$/, ">");
+                    }
+                    for (i=width-size; i--;) {
+                        left += " ";
+                    }
+                    return "[" + taken + left + "] " + percent + "%";
+                }
+
+                function loading() {
+                    var i = 0, size = 30;
+                    prompt = term.get_prompt();
+                    string = progress(0, size);
+                    term.set_prompt(progress);
+                    animation = true;
+                    (function loop() {
+                        string = progress(i++, size);
+                        term.set_prompt(string);
+                        if (i < 100) {
+                            timer = setTimeout(loop, 10);
+                        } else {
+                            term.echo(progress(i, size) + " [[b;green;]OK]").set_prompt(prompt);
+                            animation = false
+                        }
+                    })();
+                }
+
+                commands = command.split(/[ ]+/);
+                switch(commands[0]) {
+                    case "all":
+                        term.echo("");
+                        term.echo("###################### ABOUT #####################");
+                        about();
+                        term.echo("##################### FEATURED ###################");
+                        featured();
+                        term.echo("#################### EXPERIENCE ##################");
+                        experience();
+                        term.echo("#################### EDUCATION ###################");
+                        education();
+                        term.echo("############ LICENSES & CERTIFICATIONS ###########");
+                        licensesAndCertifications();
+                        term.echo("###################### SKILLS ####################");
+                        skills();
+                        term.echo("#################### LANGUAGES ###################");
+                        languages();
+                        term.echo("##################### CONTACT ####################");
+                        contact();
+                        break;
+                    case "about":
+                        about();
+                        break;
+                    case "featured":
+                        featured();
+                        break;
+                    case "experience":
+                        experience();
+                        break;
+                    case "education":
+                        education();
+                        break;
+                    case "licensesAndCertifications":
+                        licensesAndCertifications();
+                        break;
+                    case "skills":
+                        skills();
+                        break;
+                    case "languages":
+                        languages();
+                        break;
+                    case "contact":
+                        contact();
+                        break;
+                    case "help":
+                        help();
+                        break;
+                    case "exit":
+                        term.echo("");
+                        term.echo("Redirecting to crisbraatz.github.io");
+                        loading();
+                        setTimeout(function(){window.location = "https://crisbraatz.github.io/en-US/index.html"}, 2000);
+                        break;
+                    default:
+                        term.echo("");
+                        term.echo("Unknown command: " + command);
+                        term.echo("Type \u0027help\u0027 to get a list of available commands.");
+                        term.echo("");
+                }
+            },
+            {
+                prompt: "[[;grey;]crisbraatz.github.io:~$] ",
+                greetings: "[[b;white;]Welcome to my online resume!\n\nIf you are looking for the serious CV...\nyou are in the wrong place but,\nfeel free to look around!\n\nType \u0027help\u0027 to get a list of available commands.\n]",
+                keydown: function(e, term) {
+                    if (animation) {
+                        if (e.which == 68 && e.ctrlKey) {
+                            clearTimeout(timer);
+                            animation = false;
+                            term.echo(string + " [[b;red;]ERROR]").set_prompt(prompt);
+                        }
+                        return false;
+                    }
+                },
+                autocompleteMenu: true,
+                completion: availableCommands
+            });
+        });
+    </script>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v84a3a4012de94ce1a686ba8c167c359c1696973893317" integrity="sha512-euoFGowhlaLqXsPWQ48qSkBSCFs3DPRyiwVu3FjR96cMPx+Fr+gpWRhIafcHwqwCqWS42RZhIudOvEI+Ckf6MA==" data-cf-beacon='{"rayId":"842ff13dec08429c","r":1,"version":"2023.10.0","token":"0968d88be05f4760b9d8414d6f363fe4"}' crossorigin="anonymous"></script>
+</body>
+
+</html>
