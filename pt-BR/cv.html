@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>crisbraatz</title>
+    <link href="../css/jquery.terminal.min.css" rel="stylesheet"/>
+    <style>body { width: 100%; font-size: 18px; }</style>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+    <link rel="manifest" href="../img/site.webmanifest">
+    <link rel="mask-icon" href="../img/safari-pinned-tab.svg" color="#48aaf8">
+    <meta name="msapplication-TileColor" content="#48aaf8">
+    <meta name="theme-color" content="#000000">
+
+    <meta name="title" property="og:title" content="crisbraatz">
+    <meta name="image" property="og:image" content="https://raw.githubusercontent.com/crisbraatz/crisbraatz.github.io/main/img/crisbraatz.png">
+    <meta name="description" property="og:description" content="CV">
+    <meta name="author" content="Cristopher Braatz Cardoso">
+
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery.terminal.min.js"></script>
+    <script src="../js/autocomplete_menu.js"></script>
+</head>
+
+<body>
+    <script>
+        jQuery(document).ready(function ($) {
+            var animation = false;
+            var availableCommands = ['tudo', 'sobre', 'destaque', 'experiencia', 'educacao', 'licencasecertificados', 'habilidades', 'idiomas', 'contato', 'ajuda', 'sair'];
+
+            $('body').terminal(function (command, term) {
+
+                function help() {
+                    term.echo('');
+                    term.echo('Comandos disponíveis: ' + availableCommands.join(' | '));
+                    term.echo('');
+                }
+
+                function about() {
+                    term.echo('');
+                    term.echo('Sou um desenvolvedor de software orientado a resultados e testes com excelentes habilidades de resolução de problemas que fará o melhor que puder para atingir os objetivos.');
+                    term.echo('');
+                    term.echo('Ter passado por quatro projetos totalmente diferentes dentro da mesma empresa me ajudou a ganhar experiência técnica e interpessoal para lidar com diferentes produtos e negócios, bem como pessoas com diferentes origens e culturas.');
+                    term.echo('');
+                    term.echo('Possuo mais de 4 anos de experiência em desenvolvimento backend utilizando as mais recentes tecnologias e processos. Sou proficiente em inglês, atestado pela EF SET.');
+                    term.echo('');
+                }
+
+                function featured() {
+                    term.echo('');
+                    term.echo('.NET Launcher');
+                    term.echo('');
+                    term.echo('.NET Launcher oferece um aplicativo totalmente funcional para que você possa se concentrar no código de negócios e não na arquitetura.');
+                    term.echo('');
+                    term.echo('Link: https:\/\/crisbraatz.github.io\/DotNetLauncher\/');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('MetaphonePtBr');
+                    term.echo('');
+                    term.echo('MetaphonePtBr é um algoritmo de transformação de texto baseado nas regras fonéticas da língua portuguesa brasileira.');
+                    term.echo('');
+                    term.echo('Link: https:\/\/www.nuget.org\/packages\/MetaphonePtBr');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('EnigmaSimulator');
+                    term.echo('');
+                    term.echo('EnigmaSimulator é um aplicativo de criptografia/descriptografia baseado na máquina Enigma.');
+                    term.echo('');
+                    term.echo('Link: https:\/\/crisbraatz.github.io\/EnigmaSimulator\/');
+                    term.echo('');
+                }
+
+                function experience() {
+                    term.echo('');
+                    term.echo('Jul 2019 - presente');
+                    term.echo('Ambev Tech');
+                    term.echo('Líder de Desenvolvimento .NET Sênior');
+                    term.echo('');
+                    term.echo('A Ambev Tech é o hub de tecnologia da Ambev, empresa brasileira de bebidas e a 4ª maior empresa do país pertencente ao grupo Anheuser-Busch InBev, maior fabricante de cerveja do mundo.');
+                    term.echo('');
+                    term.echo('Sou líder de desenvolvimento .NET em um dos projetos de transformação digital que está substituindo aplicações legadas monolíticas por microsserviços baseados em nuvem. Minha função atual é desenvolver soluções para processar e gerir todos os pedidos de todas as filiais do Brasil. Sou responsável por ajudar os times de engenharia e de negócio no planejamento das demandas e por apoiar o time de desenvolvimento na execução delas, bem como orientá-los na evolução técnica de suas carreiras.');
+                    term.echo('');
+                    term.echo('Utilizamos arquitetura limpa e design orientado a domínio nas aplicações C# / .NET para APIs Web, processadores de eventos e tarefas recorrentes. Os dados das aplicações são mantidos no MongoDB, PostgreSQL e SQL Server. A comunicação entre as aplicações é feita via gRPC, HTTP, RabbitMQ e Service Bus. O deploy dos contêineres das aplicações é feito no Azure Kubernetes Service (AKS) via HPA e KEDA. A observabilidade das aplicações é gerenciada através do DataDog. As pipelines de CI/CD garantem a qualidade das entregas através de testes unitários, integrados e de mutação analisados pelo SonarQube e a verificação de vulnerabilidades pelo Snyk. O desenvolvimento é feito utilizando metodologias ágeis no Azure DevOps.');
+                    term.echo('');
+                }
+
+                function education() {
+                    term.echo('');
+                    term.echo('2019 - 2021');
+                    term.echo('FURB');
+                    term.echo('Pós-graduação, Data Science');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('2016 - 2018');
+                    term.echo('SENAI');
+                    term.echo('Tecnólogo, Análise e Desenvolvimento de Sistemas');
+                    term.echo('');
+                }
+
+                function licensesAndCertifications() {
+                    term.echo('');
+                    term.echo('Mar - 2024');
+                    term.echo('Formação em Cibersegurança');
+                    term.echo('Senai São Paulo');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Mar - 2024');
+                    term.echo('Security Champions - Yellow Belt');
+                    term.echo('AB InBev');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Fev - 2024');
+                    term.echo('AZ-204T00--A: Developing Solutions for Microsoft Azure');
+                    term.echo('Microsoft');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Jan - 2024');
+                    term.echo('MongoDB C# Developer Path');
+                    term.echo('MongoDB');
+                    term.echo('');
+                    term.echo('Credencial: https:\/\/learn.mongodb.com\/c\/l2KBzn1SQgucLscQcr1K7Q');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Dez - 2023');
+                    term.echo('Datadog Fundamentals');
+                    term.echo('Datadog');
+                    term.echo('');
+                    term.echo('Credencial: https:\/\/www.credly.com\/badges\/6959911d-60ac-4f18-867e-cf4ffa0fcb3c');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Out - 2023');
+                    term.echo('Foundational C# with Microsoft');
+                    term.echo('freeCodeCamp');
+                    term.echo('');
+                    term.echo('Credencial: https:\/\/freecodecamp.org\/certification\/crisbraatz\/foundational-c-sharp-with-microsoft');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Jul - 2020');
+                    term.echo('Microsoft Certified: Azure Fundamentals');
+                    term.echo('Microsoft');
+                    term.echo('');
+                    term.echo('Credencial: https:\/\/www.credly.com\/badges\/0dbaa22a-4c91-4523-9649-c44d4518ce00');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Fev - 2020');
+                    term.echo('English Level (C2 Proficient)');
+                    term.echo('EF Standard English Test (EF SET)');
+                    term.echo('');
+                    term.echo('Credencial: https:\/\/www.efset.org\/cert\/GpaHfC');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Set - 2019');
+                    term.echo('Desenvolvedor de Sistemas C#');
+                    term.echo('ProWay');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Abr - 2019');
+                    term.echo('Roteamento e switching CCNA: Introdução às redes');
+                    term.echo('Cisco Networking Academy');
+                    term.echo('');
+                    term.echo('--------------------------------------------------');
+                    term.echo('');
+                    term.echo('Mar - 2018');
+                    term.echo('Fundamentos da Gestão de TI');
+                    term.echo('FGV Online');
+                    term.echo('');
+                }
+
+                function skills() {
+                    term.echo('');
+                    term.echo('.NET');
+                    term.echo('Agile Methodologies');
+                    term.echo('ASP.NET Web API');
+                    term.echo('Azure');
+                    term.echo('Azure DevOps');
+                    term.echo('Azure Key Vault');
+                    term.echo('Azure Kubernetes Service (AKS)');
+                    term.echo('Azure Service Bus');
+                    term.echo('Back-End Web Development');
+                    term.echo('C#');
+                    term.echo('Container Orchestration');
+                    term.echo('Containerization');
+                    term.echo('Continuous Integration and Continuous Delivery (CI/CD)');
+                    term.echo('DevOps');
+                    term.echo('Docker');
+                    term.echo('Domain-Driven Design (DDD)');
+                    term.echo('Git');
+                    term.echo('GitHub');
+                    term.echo('gRPC');
+                    term.echo('Helm Charts');
+                    term.echo('Java');
+                    term.echo('JSON');
+                    term.echo('JSON Web Token (JWT)');
+                    term.echo('Kanban');
+                    term.echo('Kubernetes');
+                    term.echo('Linux');
+                    term.echo('Markdown');
+                    term.echo('Message Broker');
+                    term.echo('Microservices');
+                    term.echo('Microsoft Azure');
+                    term.echo('Microsoft SQL Server');
+                    term.echo('MongoDB');
+                    term.echo('NoSQL');
+                    term.echo('Object-Oriented Programming (OOP)');
+                    term.echo('Pipelines');
+                    term.echo('PostgreSQL');
+                    term.echo('Protocol Buffers');
+                    term.echo('Python');
+                    term.echo('RabbitMQ');
+                    term.echo('RESTful WebServices');
+                    term.echo('Scrum');
+                    term.echo('Spring Boot');
+                    term.echo('SQL');
+                    term.echo('Team Development');
+                    term.echo('Team Leadership');
+                    term.echo('Team Mentoring');
+                    term.echo('Team Motivation');
+                    term.echo('Test Driven Development');
+                    term.echo('Tokenization');
+                    term.echo('YAML');
+                    term.echo('');
+                }
+
+                function languages() {
+                    term.echo('');
+                    term.echo('Inglês');
+                    var bar_length = Math.round(77 / 10);
+                    var bar_filled = Array(bar_length + 1).join('&#9611;');
+                    var bar_blank = Array(11 - bar_length).join('&#9617;');
+                    term.echo(bar_filled + bar_blank + ' 77%')
+                    term.echo('')
+                    term.echo('Português');
+                    var bar_length = Math.round(100 / 10);
+                    var bar_filled = Array(bar_length + 1).join('&#9611;');
+                    var bar_blank = Array(11 - bar_length).join('&#9617;');
+                    term.echo(bar_filled + bar_blank + ' 100%')
+                    term.echo('');
+                }
+
+                function contact() {
+                    term.echo('');
+                    term.echo('Email: crisbraatz@icloud.com');
+                    term.echo('GitHub: https:\/\/github.com\/crisbraatz');
+                    term.echo('LinkedIn: https:\/\/www.linkedin.com\/in\/crisbraatz');
+                    term.echo('');
+                }
+
+                function progress(percent, width) {
+                    var size = Math.round(width * percent / 100);
+                    var left = '', taken = '', i;
+                    for (i = size; i--;) {
+                        taken += '=';
+                    }
+                    if (taken.length > 0) {
+                        taken = taken.replace(/=$/, '>');
+                    }
+                    for (i = width - size; i--;) {
+                        left += ' ';
+                    }
+                    return '[' + taken + left + '] ' + percent + '%';
+                }
+
+                function loading() {
+                    var i = 0, size = 30;
+                    prompt = term.get_prompt();
+                    string = progress(0, size);
+                    term.set_prompt(progress);
+                    animation = true;
+                    (function loop() {
+                        string = progress(i++, size);
+                        term.set_prompt(string);
+                        if (i < 100) {
+                            timer = setTimeout(loop, 10);
+                        } else {
+                            term.echo(progress(i, size) + ' [[b;green;]OK]').set_prompt(prompt);
+                            animation = false
+                        }
+                    })();
+                }
+
+                commands = command.split(/[ ]+/);
+                switch(commands[0]) {
+                    case 'tudo':
+                        term.echo('');
+                        term.echo('###################### SOBRE #####################');
+                        about();
+                        term.echo('##################### DESTAQUE ###################');
+                        featured();
+                        term.echo('################### EXPERIÊNCIA ##################');
+                        experience();
+                        term.echo('##################### EDUCAÇÃO ###################');
+                        education();
+                        term.echo('############# LICENÇAS & CERTIFICADOS ############');
+                        licensesAndCertifications();
+                        term.echo('################### HABILIDADES ##################');
+                        skills();
+                        term.echo('##################### IDIOMAS ####################');
+                        languages();
+                        term.echo('##################### CONTATO ####################');
+                        contact();
+                        break;
+                    case 'sobre':
+                        about();
+                        break;
+                    case 'destaque':
+                        featured();
+                        break;
+                    case 'experiencia':
+                        experience();
+                        break;
+                    case 'educacao':
+                        education();
+                        break;
+                    case 'licencasecertificados':
+                        licensesAndCertifications();
+                        break;
+                    case 'habilidades':
+                        skills();
+                        break;
+                    case 'idiomas':
+                        languages();
+                        break;
+                    case 'contato':
+                        contact();
+                        break;
+                    case 'ajuda':
+                        help();
+                        break;
+                    case 'sair':
+                        term.echo('');
+                        term.echo('Redirecionando para crisbraatz.github.io');
+                        loading();
+                        setTimeout(function () {window.location.replace('index.html')}, 2000);
+                        break;
+                    default:
+                        term.echo('');
+                        term.echo('Comando desconhecido: ' + command);
+                        term.echo('Digite \u0027ajuda\u0027 para obter uma lista dos comandos disponíveis.');
+                        term.echo('');
+                }
+            },
+            {
+                prompt: '[[;grey;]crisbraatz.github.io:~$] ',
+                greetings: '[[b;white;]Bem vindo ao meu currículo online!\n\nSe você está procurando o currículo sério...\nvocê está no lugar errado mas,\nfique à vontade para dar uma olhada!\n\nDigite \u0027ajuda\u0027 para obter uma lista dos comandos disponíveis.\n]',
+                keydown: function (e, term) {
+                    if (animation) {
+                        if (e.which == 68 && e.ctrlKey) {
+                            clearTimeout(timer);
+                            animation = false;
+                            term.echo(string + ' [[b;red;]ERRO]').set_prompt(prompt);
+                        }
+                        return false;
+                    }
+                },
+                autocompleteMenu: true,
+                completion: availableCommands
+            });
+        });
+    </script>
+
+    <script src="../js/beacon.min.js"></script>
+</body>
+
+</html>
