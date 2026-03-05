@@ -1,2 +1,3 @@
 # crisbraatz.github.io
-My portfolio.
+
+[View](https://crisbraatz.github.io)
