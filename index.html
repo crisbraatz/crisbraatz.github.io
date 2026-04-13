@@ -1,0 +1,28 @@
+<!doctype html>
+
+<head>
+  <meta charset="utf-8">
+  <title>crisbraatz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="icon" type="image/png" href="../assets/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="../assets/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="crisbraatz" />
+  <link rel="manifest" href="../assets/favicon/site.webmanifest" />
+
+  <meta name="title" property="og:title" content="crisbraatz">
+  <meta name="image" property="og:image" content="https://raw.githubusercontent.com/crisbraatz/crisbraatz.github.io/main/assets/brand/crisbraatz.png">
+  <meta name="description" property="og:description" content="My portfolio">
+  <meta name="author" content="Cristopher Braatz Cardoso">
+
+  <script type="text/javascript">
+    let language = window.navigator.languages ? window.navigator.languages[0] : null;
+    language = language || window.navigator.language || window.navigator.browserLanguage || window.navigator.userLanguage;
+    if(language === 'en-US' || language === 'pt-BR')
+      window.location.replace('./' + language + '/index.html');
+    else
+      window.location.replace('./en-US/index.html');
+  </script>
+</head>
