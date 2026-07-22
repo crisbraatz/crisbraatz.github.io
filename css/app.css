@@ -111,6 +111,30 @@ body::before {
   transform: translateY(-1px);
 }
 
+.site-nav-link {
+  border: 1px solid transparent;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.site-nav-link:hover {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+  color: var(--accent-strong);
+  transform: translateY(-1px);
+}
+
+.credential-link {
+  color: var(--ink);
+  text-decoration-color: color-mix(in srgb, var(--accent) 34%, currentColor);
+  text-underline-offset: 0.18em;
+  transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+.credential-link:hover {
+  color: var(--accent-strong);
+  text-decoration-color: var(--accent);
+}
+
 .brand-logo {
   border-color: color-mix(in srgb, var(--accent) 54%, var(--line));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 16%, transparent);
